@@ -113,7 +113,7 @@ class Cartesian:
             tooltips=list(tooltips.items()),
             mode="mouse", point_policy="snap_to_data",
             line_policy='nearest',
-            formatters={'@DateTime': 'datetime'}
+            formatters={'@date': 'datetime'}
         ))
         if self.has_legend():
             fig.legend.location = self._opts.get('legend_location', None)
@@ -148,6 +148,8 @@ class Scatter(Cartesian):
         super().__init__()
 
     def tooltips(self):
+        if self._tooltips:
+            return self._tooltips
         if self._silence_tooltips:
             return {}
         return {column:f'@{column}' for column in self._tooltip_columns}
@@ -179,7 +181,7 @@ class Scatter(Cartesian):
     
     def datetime(self):
         self._opts['x_axis_type'] = 'datetime'
-        self._tooltips[self._x] = f'<<<@{self._x}>>>'
+        self._tooltips[self._x] = f'@date{{%F}}'
         return self
 
 class Dots(Scatter):
@@ -273,7 +275,8 @@ class Hist(Cartesian):
              self._opts,
              self.DEFAULT_OPTS)
     def tooltips(self):
-        return dict([("left", "@left"), ("right", "@right"), ("top", "@top"), ("count", "@count")])
+        return self._tooltips or dict([("left", "@left"), ("right", "@right"), ("top", "@top"), ("count", "@count")])
+    
     def axis_labels(self):
         if self._silence_tooltips:
             return None
