@@ -107,9 +107,7 @@ class CalculatedColumn(FrameColumn):
             return fr[self._name].apply(self._f)
 
 class IndexColumn(FrameColumn):
-    def __init__(self):
-        self._f = f
-        self._row_based = row_based
-        super().__init__(None, None)
+    def __init__(self, name='index'):
+        super().__init__(name, None)
     def values(self, fr):        
         return fr.index
